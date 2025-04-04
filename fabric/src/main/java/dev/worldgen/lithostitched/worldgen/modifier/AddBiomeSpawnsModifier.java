@@ -8,7 +8,7 @@ import dev.worldgen.lithostitched.mixin.common.BiomeAccessor;
 import dev.worldgen.lithostitched.mixin.common.MobSpawnSettingsAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.util.random.WeightedRandomList;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
@@ -39,11 +39,11 @@ public record AddBiomeSpawnsModifier(HolderSet<Biome> biomes, List<MobSpawnSetti
 
     public void applyModifier(Biome biome) {
         MobSpawnSettings biomeMobSettings = biome.getMobSettings();
-        HashMap<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawners = new HashMap<>(((MobSpawnSettingsAccessor)biomeMobSettings).getSpawners());
+        HashMap<MobCategory, WeightedList<MobSpawnSettings.SpawnerData>> spawners = new HashMap<>(((MobSpawnSettingsAccessor)biomeMobSettings).getSpawners());
         for (MobSpawnSettings.SpawnerData spawnerEntry : this.biomeSpawns()) {
             List<MobSpawnSettings.SpawnerData> categorySpawnList = new ArrayList<>(spawners.get(spawnerEntry.type.getCategory()).unwrap());
             categorySpawnList.add(spawnerEntry);
-            spawners.put(spawnerEntry.type.getCategory(), WeightedRandomList.create(categorySpawnList));
+            spawners.put(spawnerEntry.type.getCategory(), WeightedList.create(categorySpawnList));
         }
         ((MobSpawnSettingsAccessor)biomeMobSettings).setSpawners(spawners);
         ((BiomeAccessor)(Object)biome).setMobSettings(biomeMobSettings);

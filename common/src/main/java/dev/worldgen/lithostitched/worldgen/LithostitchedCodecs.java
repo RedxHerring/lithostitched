@@ -8,10 +8,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.Block;
 
-import static net.minecraft.util.random.SimpleWeightedRandomList.*;
+import static net.minecraft.util.random.WeightedList.*;
 
 /**
  * Collection of Codecs used by Lithostitched.
@@ -25,8 +25,8 @@ public interface LithostitchedCodecs {
         return RegistryCodecs.homogeneousList(registry).fieldOf(name);
     }
 
-    static <T> Codec<SimpleWeightedRandomList<T>> singleOrWeightedList(Codec<T> codec, boolean allowsEmpty) {
-        Codec<SimpleWeightedRandomList<T>> weightedListCodec = allowsEmpty ? wrappedCodecAllowingEmpty(codec) : wrappedCodec(codec);
-        return Codec.withAlternative(weightedListCodec, codec, SimpleWeightedRandomList::single);
+    static <T> Codec<WeightedList<T>> singleOrWeightedList(Codec<T> codec, boolean allowsEmpty) {
+        Codec<WeightedList<T>> weightedListCodec = allowsEmpty ? wrappedCodecAllowingEmpty(codec) : wrappedCodec(codec);
+        return Codec.withAlternative(weightedListCodec, codec, WeightedList::single);
     }
 }

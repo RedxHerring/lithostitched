@@ -13,51 +13,51 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class LithostitchedTemplates implements Iterable<StructurePoolElement> {
-    protected final List<WeightedEntry> entries;
+    protected final List<Weighted> entries;
 
     public LithostitchedTemplates() {
         this.entries = Lists.newArrayList();
     }
 
     public LithostitchedTemplates add(StructurePoolElement element, int weight) {
-        this.entries.add(new WeightedEntry(element, this.entries.size(), weight));
+        this.entries.add(new Weighted(element, this.entries.size(), weight));
         return this;
     }
 
     public List<StructurePoolElement> shuffle(RandomSource random) {
-        List<WeightedEntry> shuffled = Lists.newArrayList(this.entries.stream().map(WeightedEntry::copy).toList());
+        List<Weighted> shuffled = Lists.newArrayList(this.entries.stream().map(Weighted::copy).toList());
         shuffled.forEach(entry -> entry.setRandom(random.nextFloat()));
-        shuffled.sort(Comparator.comparingDouble(WeightedEntry::getRandWeight));
+        shuffled.sort(Comparator.comparingDouble(Weighted::getRandWeight));
 
-        return shuffled.stream().map(WeightedEntry::getElement).toList();
+        return shuffled.stream().map(Weighted::getElement).toList();
     }
 
     public Stream<StructurePoolElement> stream() {
-        return this.entries.stream().map(WeightedEntry::getElement);
+        return this.entries.stream().map(Weighted::getElement);
     }
 
     @Override
     @NotNull
     public Iterator<StructurePoolElement> iterator() {
-        return Iterators.transform(this.entries.iterator(), WeightedEntry::getElement);
+        return Iterators.transform(this.entries.iterator(), Weighted::getElement);
     }
 
-    public static class WeightedEntry {
+    public static class Weighted {
         final StructurePoolElement element;
         final int index;
         final int weight;
         private double randWeight;
         private final boolean prioritized;
 
-        WeightedEntry(StructurePoolElement element, int index, int weight) {
+        Weighted(StructurePoolElement element, int index, int weight) {
             this.element = element;
             this.index = index;
             this.weight = weight;
             this.prioritized = element instanceof DelegatingPoolElement delegating && delegating.prioritized();
         }
 
-        private WeightedEntry copy() {
-            return new WeightedEntry(this.element, this.index, this.weight);
+        private Weighted copy() {
+            return new Weighted(this.element, this.index, this.weight);
         }
 
         private double getRandWeight() {
